@@ -381,13 +381,22 @@ const WEATHER_CODES = {
 
 function WeatherCard() {
   const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   useEffect(() => {
     fetch("https://api.open-meteo.com/v1/forecast?latitude=-34.60&longitude=-58.38&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&timezone=America/Argentina/Buenos_Aires&forecast_days=2")
       .then(r => r.json())
-      .then(data => setWeather(data))
-      .catch(() => {});
+      .then(data => { setWeather(data); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
   }, []);
-  if (!weather || !weather.daily) return null;
+  if (loading) return (
+    <Card><p style={{ ...styles.cardMeta, textAlign: "center", color: "#9ca3af" }}>🌤️ Loading weather...</p></Card>
+  );
+  if (error || !weather || !weather.daily) return (
+    <Card>
+      <p style={{ ...styles.cardMeta, textAlign: "center" }}>🌤️ <a href="https://weather.com/weather/today/l/-34.60,-58.38" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>Check Buenos Aires weather</a></p>
+    </Card>
+  );
   const d = weather.daily;
   const cw = weather.current_weather;
   const todayDesc = WEATHER_CODES[d.weathercode[0]] || "—";
