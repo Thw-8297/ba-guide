@@ -18,5 +18,18 @@
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+    <script>
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          var last = localStorage.getItem('ba-guide-last');
+          var now = Date.now();
+          if (last && (now - parseInt(last)) > 3600000) {
+            location.reload();
+          }
+          localStorage.setItem('ba-guide-last', now);
+        }
+      });
+      localStorage.setItem('ba-guide-last', Date.now());
+    </script>
   </body>
 </html>
