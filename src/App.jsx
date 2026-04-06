@@ -281,63 +281,94 @@ function Collapsible({ title, children, defaultOpen = false, accent }) {
   );
 }
 
-// --- BANNER ---
-function HeroBanner() {
+// --- QUINQUELA-STYLE BANNERS ---
+function QuinquelaBanner({ title, subtitle, variant = "home" }) {
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", timeZone: "America/Argentina/Buenos_Aires" });
+  const palettes = {
+    home: { sky: "#1a3a5c", water: "#0d2740", b1: "#d4442a", b2: "#e8a832", b3: "#2874a6", b4: "#c0392b", b5: "#f1c40f", b6: "#1a6b4a", crane: "#2c1810" },
+    contacts: { sky: "#1e2d4a", water: "#152238", b1: "#c0392b", b2: "#2980b9", b3: "#e67e22", b4: "#8e44ad", b5: "#e74c3c", b6: "#27ae60", crane: "#1a1a2e" },
+    schedule: { sky: "#2c1445", water: "#1a0d30", b1: "#e8a832", b2: "#d4442a", b3: "#2874a6", b4: "#e67e22", b5: "#c0392b", b6: "#f39c12", crane: "#1a0d25" },
+    places: { sky: "#1a4a3a", water: "#0d3528", b1: "#e74c3c", b2: "#f1c40f", b3: "#e67e22", b4: "#2980b9", b5: "#d35400", b6: "#c0392b", crane: "#0d2818" },
+    essentials: { sky: "#3a2010", water: "#2a1508", b1: "#2980b9", b2: "#e74c3c", b3: "#f1c40f", b4: "#1a6b4a", b5: "#e67e22", b6: "#8e44ad", crane: "#1a1008" },
+  };
+  const p = palettes[variant] || palettes.home;
   return (
-    <div style={styles.hero}>
-      <svg style={styles.heroSvg} viewBox="0 0 480 200" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#f4845f" />
-            <stop offset="35%" stopColor="#e07455" />
-            <stop offset="65%" stopColor="#c76b6a" />
-            <stop offset="100%" stopColor="#7c6285" />
-          </linearGradient>
-          <linearGradient id="skyLow" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#f4a261" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="#e9c46a" stopOpacity="0.3" />
-          </linearGradient>
-        </defs>
-        <rect width="480" height="200" fill="url(#sky)" />
-        <rect y="120" width="480" height="80" fill="url(#skyLow)" />
-        {/* Sun */}
-        <circle cx="380" cy="90" r="28" fill="#fde68a" opacity="0.9" />
-        <circle cx="380" cy="90" r="38" fill="#fde68a" opacity="0.15" />
-        {/* Obelisco silhouette */}
-        <polygon points="195,160 200,40 205,40 210,160" fill="#1e293b" opacity="0.5" />
-        <rect x="196" y="55" width="13" height="4" fill="#1e293b" opacity="0.5" />
-        {/* Buildings silhouette */}
-        <rect x="0" y="130" width="480" height="70" fill="#1e293b" opacity="0.35" />
-        <rect x="20" y="110" width="35" height="90" fill="#1e293b" opacity="0.4" />
-        <rect x="60" y="120" width="25" height="80" fill="#1e293b" opacity="0.35" />
-        <rect x="90" y="105" width="30" height="95" fill="#1e293b" opacity="0.4" />
-        <rect x="130" y="115" width="20" height="85" fill="#1e293b" opacity="0.35" />
-        <rect x="155" y="125" width="35" height="75" fill="#1e293b" opacity="0.3" />
-        <rect x="225" y="118" width="28" height="82" fill="#1e293b" opacity="0.35" />
-        <rect x="258" y="108" width="22" height="92" fill="#1e293b" opacity="0.4" />
-        <rect x="290" y="122" width="40" height="78" fill="#1e293b" opacity="0.35" />
-        <rect x="340" y="115" width="25" height="85" fill="#1e293b" opacity="0.3" />
-        <rect x="370" y="125" width="30" height="75" fill="#1e293b" opacity="0.35" />
-        <rect x="410" y="110" width="35" height="90" fill="#1e293b" opacity="0.4" />
-        <rect x="450" y="120" width="30" height="80" fill="#1e293b" opacity="0.35" />
-        {/* Trees in foreground */}
-        <circle cx="50" cy="145" r="12" fill="#2d4a3e" opacity="0.5" />
-        <circle cx="160" cy="148" r="10" fill="#2d4a3e" opacity="0.45" />
-        <circle cx="320" cy="146" r="11" fill="#2d4a3e" opacity="0.5" />
-        <circle cx="440" cy="148" r="9" fill="#2d4a3e" opacity="0.4" />
+    <div style={{ ...styles.hero, position: "relative" }}>
+      <svg style={{ ...styles.heroSvg, height: 130 }} viewBox="0 0 480 130" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="480" height="130" fill={p.sky} />
+        {/* Water / port */}
+        <rect y="85" width="480" height="45" fill={p.water} />
+        {/* Water reflections */}
+        <line x1="20" y1="100" x2="65" y2="100" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
+        <line x1="100" y1="108" x2="155" y2="108" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
+        <line x1="200" y1="103" x2="250" y2="103" stroke="rgba(255,255,255,0.06)" strokeWidth="1.5" />
+        <line x1="300" y1="110" x2="360" y2="110" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
+        <line x1="380" y1="98" x2="430" y2="98" stroke="rgba(255,255,255,0.06)" strokeWidth="1.5" />
+        <line x1="60" y1="115" x2="120" y2="115" stroke="rgba(255,255,255,0.04)" strokeWidth="2" />
+        <line x1="250" y1="118" x2="310" y2="118" stroke="rgba(255,255,255,0.04)" strokeWidth="1.5" />
+        {/* La Boca buildings - bold thick blocks */}
+        <rect x="10" y="35" width="42" height="55" fill={p.b1} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="15" y="42" width="10" height="12" fill="rgba(255,255,200,0.35)" />
+        <rect x="30" y="42" width="10" height="12" fill="rgba(255,255,200,0.25)" />
+        <rect x="15" y="60" width="10" height="12" fill="rgba(255,255,200,0.25)" />
+        <rect x="30" y="60" width="10" height="12" fill="rgba(255,255,200,0.3)" />
+        <rect x="55" y="28" width="38" height="62" fill={p.b2} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="60" y="35" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="74" y="35" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="60" y="50" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="74" y="50" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="96" y="40" width="35" height="50" fill={p.b3} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="100" y="47" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="114" y="47" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="134" y="32" width="30" height="58" fill={p.b4} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="138" y="40" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="150" y="40" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        {/* Right side buildings */}
+        <rect x="355" y="38" width="35" height="52" fill={p.b5} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="360" y="45" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="374" y="45" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="393" y="30" width="40" height="60" fill={p.b6} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="398" y="38" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="412" y="38" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="398" y="54" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        <rect x="436" y="42" width="44" height="48" fill={p.b1} stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="441" y="50" width="8" height="10" fill="rgba(255,255,200,0.3)" />
+        <rect x="455" y="50" width="8" height="10" fill="rgba(255,255,200,0.25)" />
+        {/* Port crane */}
+        <line x1="190" y1="15" x2="190" y2="90" stroke={p.crane} strokeWidth="4" />
+        <line x1="190" y1="18" x2="230" y2="30" stroke={p.crane} strokeWidth="3" />
+        <line x1="190" y1="18" x2="170" y2="28" stroke={p.crane} strokeWidth="3" />
+        <line x1="230" y1="30" x2="232" y2="70" stroke={p.crane} strokeWidth="1.5" strokeDasharray="3,4" />
+        {/* Ship hull */}
+        <path d="M260,80 L280,72 L340,72 L350,80 Z" fill="#4a3828" stroke="#1a1008" strokeWidth="1.5" />
+        <rect x="295" y="58" width="25" height="14" fill="#5a4838" stroke="#1a1008" strokeWidth="1" />
+        <rect x="300" y="48" width="15" height="12" fill="#6a5848" stroke="#1a1008" strokeWidth="1" />
+        <line x1="308" y1="35" x2="308" y2="48" stroke="#3a2818" strokeWidth="1.5" />
+        {/* Smoke/steam */}
+        <circle cx="310" cy="32" r="4" fill="rgba(180,180,180,0.2)" />
+        <circle cx="315" cy="26" r="5" fill="rgba(180,180,180,0.15)" />
+        <circle cx="322" cy="22" r="4" fill="rgba(180,180,180,0.1)" />
+        {/* Color reflections in water */}
+        <rect x="12" y="92" width="38" height="6" fill={p.b1} opacity="0.15" />
+        <rect x="57" y="95" width="34" height="5" fill={p.b2} opacity="0.12" />
+        <rect x="98" y="93" width="30" height="5" fill={p.b3} opacity="0.12" />
+        <rect x="357" y="94" width="32" height="5" fill={p.b5} opacity="0.12" />
+        <rect x="395" y="92" width="38" height="6" fill={p.b6} opacity="0.15" />
+        <rect x="438" y="95" width="40" height="5" fill={p.b1} opacity="0.12" />
+        {/* Thick impasto texture lines */}
+        <line x1="0" y1="88" x2="480" y2="88" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
       </svg>
       <div style={styles.heroContent}>
-        <p style={styles.heroEyebrow}>April 25 – May 11, 2026</p>
-        <h1 style={styles.heroTitle}>Buenos Aires</h1>
-        <p style={styles.heroSubtitle}>Grandma & Papa's Guide</p>
-        <div style={styles.heroDivider} />
-        <p style={styles.heroDate}>{today}</p>
+        {variant === "home" && <p style={styles.heroEyebrow}>April 25 – May 11, 2026</p>}
+        <h1 style={{ ...styles.heroTitle, fontSize: variant === "home" ? 32 : 26 }}>{title}</h1>
+        <p style={{ ...styles.heroSubtitle, fontSize: 13, opacity: 0.9 }}>{subtitle}</p>
+        {variant === "home" && <p style={{ ...styles.heroDate, marginTop: 4 }}>{today}</p>}
       </div>
     </div>
   );
 }
 
+// --- TAB CONTENT ---
 // --- TAB CONTENT ---
 function HomeTab() {
   const [time, setTime] = useState({ japan: getJapanTime(), ba: getBuenosAiresTime() });
@@ -351,12 +382,12 @@ function HomeTab() {
 
   return (
     <div>
-      <HeroBanner />
+      <QuinquelaBanner title="Buenos Aires" subtitle="Grandma & Papa's Guide" variant="home" />
 
       <Card style={{ background: "linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%)", color: "#fff" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
-            <div style={{ fontSize: 11, opacity: 0.7, textTransform: "uppercase", letterSpacing: 1 }}>Buenos Aires</div>
+            <div style={{ fontSize: 11, opacity: 0.7, textTransform: "uppercase", letterSpacing: 1 }}>Buenos Aires 🇦🇷</div>
             <div style={{ fontSize: 20, fontWeight: 700 }}>{time.ba}</div>
           </div>
           <div style={{ width: 1, height: 32, background: "rgba(255,255,255,0.25)" }} />
@@ -390,6 +421,25 @@ function HomeTab() {
         <p style={styles.cardMeta}>• 🐕 Navi: Elora feeds AM, Walo feeds PM</p>
       </Card>
 
+      <div style={{ marginTop: 4 }}>
+        {ADDRESSES.map((a, i) => (
+          <Card key={i}>
+            <strong>{a.icon} {a.label}</strong>
+            {a.note && <p style={{ fontSize: 12, color: "#6b7280", margin: "2px 0" }}>{a.note}</p>}
+            <AddressLink address={a.address} />
+          </Card>
+        ))}
+      </div>
+
+    </div>
+  );
+}
+
+function EmergencyTab() {
+  return (
+    <div>
+      <QuinquelaBanner title="Contacts" subtitle="Your support network" variant="contacts" />
+
       <Card accent="#dc2626">
         <h3 style={styles.cardTitle}>🚨 Quick Emergency</h3>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -401,61 +451,7 @@ function HomeTab() {
         </div>
       </Card>
 
-      <Section title="Key Addresses" icon="🏠" defaultOpen={false}>
-        {ADDRESSES.map((a, i) => (
-          <Card key={i}>
-            <strong>{a.icon} {a.label}</strong>
-            {a.note && <p style={{ fontSize: 12, color: "#6b7280", margin: "2px 0" }}>{a.note}</p>}
-            <AddressLink address={a.address} />
-          </Card>
-        ))}
-      </Section>
-
-    </div>
-  );
-}
-
-function EmergencyTab() {
-  return (
-    <div>
-      <div style={styles.hero}>
-        <svg style={styles.heroSvg} viewBox="0 0 480 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="contactGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#1e3a5f" />
-              <stop offset="50%" stopColor="#2d5a87" />
-              <stop offset="100%" stopColor="#1e3a5f" />
-            </linearGradient>
-          </defs>
-          <rect width="480" height="160" fill="url(#contactGrad)" />
-          {/* Connection dots pattern */}
-          {[60,140,220,300,380,420].map((x,i) => {
-            const y = [50,80,45,75,55,90][i];
-            const r = [4,5,3,6,4,3][i];
-            return <circle key={i} cx={x} cy={y} r={r} fill="rgba(255,255,255,0.15)" />;
-          })}
-          {/* Connection lines */}
-          <line x1="60" y1="50" x2="140" y2="80" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <line x1="140" y1="80" x2="220" y2="45" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <line x1="220" y1="45" x2="300" y2="75" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <line x1="300" y1="75" x2="380" y2="55" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <line x1="380" y1="55" x2="420" y2="90" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          {/* Phone icon */}
-          <rect x="218" y="95" width="44" height="50" rx="8" fill="rgba(255,255,255,0.1)" />
-          <rect x="228" y="100" width="24" height="35" rx="2" fill="rgba(255,255,255,0.08)" />
-          <circle cx="240" cy="140" r="3" fill="rgba(255,255,255,0.12)" />
-          {/* Signal waves */}
-          <path d="M270 105 Q280 95 290 105" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
-          <path d="M265 100 Q280 85 295 100" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2" />
-        </svg>
-        <div style={styles.heroContent}>
-          <p style={styles.heroEyebrow}>Your Support Network</p>
-          <h1 style={{ ...styles.heroTitle, fontSize: 30 }}>Contacts</h1>
-          <p style={{ ...styles.heroSubtitle, fontSize: 13, opacity: 0.8 }}>Tap any section to expand</p>
-        </div>
-      </div>
-
-      <Section title="Emergency Contacts" icon="📞" defaultOpen={false} count={EMERGENCY_CONTACTS.length}>
+      <Section title="All Contacts" icon="📞" defaultOpen={false} count={EMERGENCY_CONTACTS.length}>
         {EMERGENCY_CONTACTS.map((c, i) => (
           <Card key={i} accent={c.priority ? "#dc2626" : "#9ca3af"}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -541,40 +537,8 @@ function ScheduleTab() {
 
   return (
     <div>
-      <div style={styles.hero}>
-        <svg style={styles.heroSvg} viewBox="0 0 480 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="schedGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#5b4a8a" />
-              <stop offset="50%" stopColor="#7c6daa" />
-              <stop offset="100%" stopColor="#4a3d7a" />
-            </linearGradient>
-          </defs>
-          <rect width="480" height="160" fill="url(#schedGrad)" />
-          {/* Calendar grid */}
-          {[0,1,2,3,4].map(col => (
-            [0,1,2].map(row => (
-              <rect key={`${col}-${row}`} x={50 + col * 80} y={30 + row * 32} width={65} height={24} rx={4}
-                fill={col === 1 && row === 1 ? "rgba(255,255,255,0.2)" : "rgba(255,255,255,0.06)"}
-                stroke="rgba(255,255,255,0.08)" strokeWidth="0.5" />
-            ))
-          ))}
-          {/* Clock */}
-          <circle cx="420" cy="50" r="22" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-          <line x1="420" y1="50" x2="420" y2="35" stroke="rgba(255,255,255,0.2)" strokeWidth="2" strokeLinecap="round" />
-          <line x1="420" y1="50" x2="432" y2="55" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" strokeLinecap="round" />
-          <circle cx="420" cy="50" r="2" fill="rgba(255,255,255,0.2)" />
-          {/* Stars */}
-          <circle cx="30" cy="25" r="1.5" fill="rgba(255,255,255,0.2)" />
-          <circle cx="70" cy="15" r="1" fill="rgba(255,255,255,0.15)" />
-          <circle cx="450" cy="120" r="1.5" fill="rgba(255,255,255,0.15)" />
-        </svg>
-        <div style={styles.heroContent}>
-          <p style={styles.heroEyebrow}>Monday – Friday</p>
-          <h1 style={{ ...styles.heroTitle, fontSize: 30 }}>Weekly Schedule</h1>
-          <p style={{ ...styles.heroSubtitle, fontSize: 13, opacity: 0.8 }}>School, activities & routines</p>
-        </div>
-      </div>
+      <QuinquelaBanner title="Weekly Schedule" subtitle="School, activities & routines" variant="schedule" />
+
       <Section title="Morning Routine" icon="🌅" defaultOpen={false}>
         <Card>
           <p style={styles.cardMeta}>⏰ <strong>6:30–6:45</strong> — Kids wake up</p>
@@ -681,48 +645,8 @@ function ScheduleTab() {
 function PlacesTab() {
   return (
     <div>
-      <div style={styles.hero}>
-        <svg style={styles.heroSvg} viewBox="0 0 480 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="placesGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#2d6a4f" />
-              <stop offset="50%" stopColor="#40916c" />
-              <stop offset="100%" stopColor="#2d6a4f" />
-            </linearGradient>
-          </defs>
-          <rect width="480" height="160" fill="url(#placesGrad)" />
-          {/* Colorful buildings - Buenos Aires style */}
-          <rect x="20" y="80" width="45" height="80" rx="2" fill="#e07455" opacity="0.4" />
-          <rect x="25" y="90" width="10" height="12" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="40" y="90" width="10" height="12" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="25" y="108" width="10" height="12" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="40" y="108" width="10" height="12" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="70" y="65" width="40" height="95" rx="2" fill="#e9c46a" opacity="0.35" />
-          <rect x="75" y="75" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="88" y="75" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="75" y="92" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="88" y="92" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="115" y="75" width="35" height="85" rx="2" fill="#7c6daa" opacity="0.35" />
-          <rect x="360" y="70" width="40" height="90" rx="2" fill="#e07455" opacity="0.35" />
-          <rect x="405" y="85" width="50" height="75" rx="2" fill="#e9c46a" opacity="0.3" />
-          <rect x="365" y="80" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="380" y="80" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="410" y="95" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="425" y="95" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          <rect x="440" y="95" width="8" height="10" rx="1" fill="rgba(255,255,255,0.15)" />
-          {/* Trees */}
-          <circle cx="170" cy="120" r="15" fill="rgba(255,255,255,0.08)" />
-          <circle cx="340" cy="125" r="12" fill="rgba(255,255,255,0.08)" />
-          <circle cx="310" cy="118" r="14" fill="rgba(255,255,255,0.06)" />
-          {/* Street line */}
-          <rect x="0" y="148" width="480" height="12" fill="rgba(0,0,0,0.15)" />
-        </svg>
-        <div style={styles.heroContent}>
-          <p style={styles.heroEyebrow}>Explore the Neighborhood</p>
-          <h1 style={{ ...styles.heroTitle, fontSize: 30 }}>Around Town</h1>
-          <p style={{ ...styles.heroSubtitle, fontSize: 13, opacity: 0.8 }}>Food, parks & activities</p>
-        </div>
-      </div>
+      <QuinquelaBanner title="Around Town" subtitle="Food, parks & activities" variant="places" />
+
       <Section title="Food & Shopping" icon="🍕" defaultOpen={false} count={FOOD_SHOPS.length}>
         <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 12, paddingLeft: 4 }}>All within walking distance of home</p>
         {FOOD_SHOPS.map((f, i) => (
@@ -772,6 +696,56 @@ function PlacesTab() {
           </Card>
         ))}
       </Section>
+
+      <Section title="Grandma & Papa Outings" icon="🗽" count={8}>
+        <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 12, paddingLeft: 4 }}>While the kids are at school; all reachable by Uber.</p>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🏛️ Recoleta Cemetery</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Stunning historic cemetery with ornate mausoleums, including Evita's tomb. Small entry fee.</p>
+          <AddressLink address="Junín 1760, Recoleta, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🎨 MALBA</strong>
+          <p style={{ fontSize: 12, color: "#6b7280", margin: 0, fontStyle: "italic" }}>Museo de Arte Latinoamericano de Buenos Aires</p>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>World-class Latin American art. Excellent café. Closed Tuesdays.</p>
+          <AddressLink address="Av. Pres. Figueroa Alcorta 3415, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🖼️ Museo Nacional de Bellas Artes</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Argentina's premier fine arts museum. Free admission. Closed Mondays.</p>
+          <AddressLink address="Av. del Libertador 1473, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🎭 Teatro Colón</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>One of the world's great opera houses. Take a guided tour (available in English). Book online in advance.</p>
+          <AddressLink address="Cerrito 628, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🧉 Museo del Mate</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Small, charming museum dedicated to Argentina's national drink. In the heart of San Telmo.</p>
+          <AddressLink address="Bolívar 970, San Telmo, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🏚️ Zanjón de Granados</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Underground tunnels and ruins beneath a restored San Telmo mansion. Guided tours only; reserve ahead.</p>
+          <AddressLink address="Defensa 755, San Telmo, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>🛍️ Mercado de San Telmo</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Historic indoor market with food stalls, antiques, coffee, and empanadas. Great for a morning visit.</p>
+          <AddressLink address="Bolívar 950, San Telmo, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>⛪ Catedral Metropolitana</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>Buenos Aires' main cathedral on Plaza de Mayo. Free entry. Pope Francis' former church.</p>
+          <AddressLink address="San Martín 27, CABA" />
+        </Card>
+        <Card>
+          <strong style={{ fontSize: 15 }}>📚 El Ateneo Grand Splendid</strong>
+          <p style={{ fontSize: 13, color: "#374151", margin: "4px 0" }}>A 1920s theater converted into one of the world's most beautiful bookstores. Free to visit; grab a coffee on the old stage.</p>
+          <AddressLink address="Av. Santa Fe 1860, CABA" />
+        </Card>
+      </Section>
     </div>
   );
 }
@@ -779,43 +753,8 @@ function PlacesTab() {
 function EssentialsTab() {
   return (
     <div>
-      <div style={styles.hero}>
-        <svg style={styles.heroSvg} viewBox="0 0 480 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="essGrad" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#92400e" />
-              <stop offset="50%" stopColor="#b45309" />
-              <stop offset="100%" stopColor="#78350f" />
-            </linearGradient>
-          </defs>
-          <rect width="480" height="160" fill="url(#essGrad)" />
-          {/* Compass */}
-          <circle cx="400" cy="70" r="30" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="1.5" />
-          <circle cx="400" cy="70" r="24" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="1" />
-          <line x1="400" y1="46" x2="400" y2="50" stroke="rgba(255,255,255,0.2)" strokeWidth="2" />
-          <line x1="400" y1="90" x2="400" y2="94" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
-          <line x1="376" y1="70" x2="380" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
-          <line x1="420" y1="70" x2="424" y2="70" stroke="rgba(255,255,255,0.15)" strokeWidth="1.5" />
-          <polygon points="400,50 396,70 400,66 404,70" fill="rgba(255,255,255,0.25)" />
-          <polygon points="400,90 396,70 400,74 404,70" fill="rgba(255,255,255,0.1)" />
-          {/* Wifi symbol */}
-          <path d="M70 80 Q90 60 110 80" fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="2" />
-          <path d="M60 90 Q90 55 120 90" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="2" />
-          <path d="M50 100 Q90 50 130 100" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="2" />
-          <circle cx="90" cy="85" r="3" fill="rgba(255,255,255,0.15)" />
-          {/* Currency symbols */}
-          <text x="200" y="50" fill="rgba(255,255,255,0.08)" fontSize="28" fontFamily="serif">$</text>
-          <text x="260" y="120" fill="rgba(255,255,255,0.06)" fontSize="22" fontFamily="serif">$</text>
-          {/* Plane */}
-          <polygon points="320,40 350,50 320,55 325,50 320,45" fill="rgba(255,255,255,0.1)" />
-          <line x1="320" y1="48" x2="290" y2="55" stroke="rgba(255,255,255,0.06)" strokeWidth="1" strokeDasharray="3,3" />
-        </svg>
-        <div style={styles.heroContent}>
-          <p style={styles.heroEyebrow}>Good to Know</p>
-          <h1 style={{ ...styles.heroTitle, fontSize: 30 }}>Essentials</h1>
-          <p style={{ ...styles.heroSubtitle, fontSize: 13, opacity: 0.8 }}>Wifi, transport, phrases & more</p>
-        </div>
-      </div>
+      <QuinquelaBanner title="Essentials" subtitle="Wifi, transport, phrases & more" variant="essentials" />
+
       <Section title="Wifi" icon="📶" defaultOpen={false}>
         <Card>
           <p style={styles.cardMeta}><strong>Network:</strong> urbanparadise</p>
@@ -881,6 +820,17 @@ function EssentialsTab() {
                 <div style={{ ...styles.phraseCell, fontWeight: 600, color: "#1e40af", background: i % 2 === 0 ? "#f9fafb" : "#fff" }}>{p.es}</div>
               </div>
             ))}
+          </div>
+        </Card>
+      </Section>
+
+      <Section title="Useful Links" icon="🔗">
+        <Card>
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <a href="https://dolarhoy.com/cotizaciondolarblue" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>💵 Dólar Blue (live exchange rate)</a>
+            <a href="https://weather.com/weather/today/l/-34.60,-58.38" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>🌤️ Buenos Aires Weather</a>
+            <a href="https://www.batimes.com.ar" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>📰 Buenos Aires Times (English news)</a>
+            <a href="https://turismo.buenosaires.gob.ar/en" target="_blank" rel="noopener noreferrer" style={{ fontSize: 14, color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>🏙️ Buenos Aires City Guide</a>
           </div>
         </Card>
       </Section>
@@ -995,7 +945,7 @@ const styles = {
   heroSvg: {
     display: "block",
     width: "100%",
-    height: 180,
+    height: 130,
   },
   heroContent: {
     position: "absolute",
