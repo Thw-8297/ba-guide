@@ -1,0 +1,201 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <clipPath id="roundedIcon">
+      <rect x="0" y="0" width="512" height="512" rx="112" />
+    </clipPath>
+    <linearGradient id="sunset" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4845f" />
+      <stop offset="30%" stop-color="#e8956a" />
+      <stop offset="55%" stop-color="#f4a261" />
+      <stop offset="80%" stop-color="#e9c46a" />
+      <stop offset="100%" stop-color="#ddb892" />
+    </linearGradient>
+    <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a7c59" />
+      <stop offset="100%" stop-color="#3a6348" />
+    </linearGradient>
+    <linearGradient id="obelGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d4c8b8" />
+      <stop offset="50%" stop-color="#ede4d6" />
+      <stop offset="100%" stop-color="#c4b8a8" />
+    </linearGradient>
+  </defs>
+
+  <g clip-path="url(#roundedIcon)">
+    <rect x="0" y="0" width="512" height="512" fill="url(#sunset)" />
+
+    <!-- Sol de Mayo -->
+    <g transform="translate(380, 110)">
+      <circle cx="0" cy="0" r="70" fill="#fde68a" opacity="0.08" />
+      <g fill="#f4c542" opacity="0.85">
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(0)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(22.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(45)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(67.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(90)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(112.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(135)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(157.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(180)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(202.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(225)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(247.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(270)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(292.5)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(315)" />
+        <polygon points="0,-58 -4,-30 4,-30" transform="rotate(337.5)" />
+      </g>
+      <g fill="#e9b635" opacity="0.7">
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(11.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(33.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(56.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(78.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(101.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(123.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(146.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(168.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(191.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(213.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(236.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(258.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(281.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(303.75)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(326.25)" />
+        <path d="M0,-46 Q-3,-38 -2,-30 Q0,-33 2,-30 Q3,-38 0,-46Z" transform="rotate(348.75)" />
+      </g>
+      <circle cx="0" cy="0" r="24" fill="#fde68a" />
+      <circle cx="0" cy="0" r="24" fill="none" stroke="#e0a820" stroke-width="1" opacity="0.5" />
+      <ellipse cx="-7" cy="-3" rx="3" ry="3.5" fill="#c48a20" opacity="0.7" />
+      <ellipse cx="7" cy="-3" rx="3" ry="3.5" fill="#c48a20" opacity="0.7" />
+      <circle cx="-7" cy="-3" r="1.5" fill="#8a6010" opacity="0.6" />
+      <circle cx="7" cy="-3" r="1.5" fill="#8a6010" opacity="0.6" />
+      <path d="M-1,2 Q0,5 1,2" fill="none" stroke="#c48a20" stroke-width="1" opacity="0.5" />
+      <path d="M-6,8 Q0,13 6,8" fill="none" stroke="#c48a20" stroke-width="1.2" opacity="0.6" />
+    </g>
+
+    <!-- Distant buildings -->
+    <rect x="0" y="235" width="512" height="277" fill="#2d4a3e" opacity="0.15" />
+    <rect x="10" y="215" width="38" height="110" fill="#c76b6a" opacity="0.3" />
+    <rect x="55" y="203" width="30" height="122" fill="#d4a574" opacity="0.25" />
+    <rect x="355" y="210" width="35" height="115" fill="#c76b6a" opacity="0.25" />
+    <rect x="397" y="220" width="45" height="105" fill="#d4a574" opacity="0.25" />
+    <rect x="450" y="207" width="32" height="118" fill="#7c6285" opacity="0.25" />
+
+    <!-- Obelisco -->
+    <polygon points="256,30 264,285 248,285" fill="url(#obelGrad)" opacity="0.9" />
+    <rect x="242" y="265" width="28" height="20" rx="1" fill="#c4b8a8" opacity="0.7" />
+    <rect x="249" y="80" width="14" height="8" rx="1" fill="#b8a898" opacity="0.5" />
+    <rect x="250" y="110" width="12" height="5" rx="1" fill="#b8a898" opacity="0.4" />
+    <polygon points="256,30 259,55 253,55" fill="#ede4d6" opacity="0.95" />
+    <polygon points="256,30 264,285 256,285" fill="rgba(0,0,0,0.08)" />
+
+    <!-- Colorful buildings -->
+    <rect x="25" y="255" width="55" height="90" rx="2" fill="#e07455" opacity="0.6" />
+    <rect x="30" y="265" width="12" height="14" rx="2" fill="#fde68a" opacity="0.3" />
+    <rect x="48" y="265" width="12" height="14" rx="2" fill="#fde68a" opacity="0.25" />
+    <rect x="30" y="285" width="12" height="14" rx="2" fill="#fde68a" opacity="0.25" />
+    <rect x="48" y="285" width="12" height="14" rx="2" fill="#fde68a" opacity="0.3" />
+    <rect x="90" y="240" width="48" height="105" rx="2" fill="#e9c46a" opacity="0.5" />
+    <rect x="95" y="250" width="10" height="12" rx="2" fill="#fff" opacity="0.2" />
+    <rect x="110" y="250" width="10" height="12" rx="2" fill="#fff" opacity="0.15" />
+    <rect x="95" y="268" width="10" height="12" rx="2" fill="#fff" opacity="0.15" />
+    <rect x="110" y="268" width="10" height="12" rx="2" fill="#fff" opacity="0.2" />
+    <rect x="148" y="250" width="40" height="95" rx="2" fill="#7c6285" opacity="0.4" />
+    <rect x="320" y="245" width="45" height="100" rx="2" fill="#7c6daa" opacity="0.45" />
+    <rect x="325" y="255" width="10" height="12" rx="2" fill="#fde68a" opacity="0.2" />
+    <rect x="340" y="255" width="10" height="12" rx="2" fill="#fde68a" opacity="0.15" />
+    <rect x="375" y="255" width="50" height="90" rx="2" fill="#e07455" opacity="0.5" />
+    <rect x="380" y="265" width="10" height="12" rx="2" fill="#fde68a" opacity="0.25" />
+    <rect x="395" y="265" width="10" height="12" rx="2" fill="#fde68a" opacity="0.2" />
+    <rect x="435" y="250" width="42" height="95" rx="2" fill="#e9c46a" opacity="0.45" />
+
+    <!-- Ground -->
+    <rect x="0" y="335" width="512" height="177" fill="url(#groundGrad)" />
+
+    <!-- Trees -->
+    <circle cx="42" cy="330" r="20" fill="#5a9e6f" opacity="0.6" />
+    <circle cx="455" cy="327" r="22" fill="#5a9e6f" opacity="0.55" />
+    <circle cx="485" cy="333" r="14" fill="#6aae7f" opacity="0.4" />
+
+    <!-- Path -->
+    <rect x="0" y="373" width="512" height="8" rx="2" fill="#c4b8a8" opacity="0.3" />
+
+    <!-- Grandma -->
+    <g transform="translate(125, -85)">
+      <path d="M0,520 L-18,475 Q-20,460 -10,455 L10,455 Q20,460 18,475 Z" fill="#7c6285" opacity="0.85" />
+      <circle cx="0" cy="443" r="16" fill="#e8c4a0" />
+      <path d="M-14,438 Q-16,425 -5,422 Q5,420 14,425 Q16,430 14,438" fill="#c4c4c4" />
+      <circle cx="-5" cy="443" r="2" fill="#4a3d3d" />
+      <circle cx="5" cy="443" r="2" fill="#4a3d3d" />
+      <path d="M-5,449 Q0,454 5,449" fill="none" stroke="#b08870" stroke-width="1.5" stroke-linecap="round" />
+      <path d="M14,465 Q30,472 42,476" fill="none" stroke="#e8c4a0" stroke-width="5" stroke-linecap="round" />
+      <path d="M-14,465 Q-25,468 -28,460" fill="none" stroke="#e8c4a0" stroke-width="5" stroke-linecap="round" />
+    </g>
+
+    <!-- Elora -->
+    <g transform="translate(215, -85)">
+      <path d="M0,522 L-12,488 Q-14,478 -8,474 L8,474 Q14,478 12,488 Z" fill="#e07455" opacity="0.8" />
+      <circle cx="0" cy="464" r="13" fill="#f0d0a8" />
+      <path d="M-12,460 Q-14,448 -6,444 Q4,442 12,446 Q14,450 13,460" fill="#e8c870" />
+      <path d="M-12,460 Q-14,478 -10,485" fill="none" stroke="#e8c870" stroke-width="5" stroke-linecap="round" />
+      <path d="M12,460 Q14,478 10,485" fill="none" stroke="#e8c870" stroke-width="5" stroke-linecap="round" />
+      <circle cx="-4" cy="464" r="1.5" fill="#4a6a4a" />
+      <circle cx="4" cy="464" r="1.5" fill="#4a6a4a" />
+      <path d="M-4,469 Q0,473 4,469" fill="none" stroke="#c09878" stroke-width="1.2" stroke-linecap="round" />
+      <path d="M-10,480 Q-22,478 -32,476" fill="none" stroke="#f0d0a8" stroke-width="4" stroke-linecap="round" />
+      <path d="M10,480 Q22,482 30,484" fill="none" stroke="#f0d0a8" stroke-width="4" stroke-linecap="round" />
+    </g>
+
+    <!-- Walo -->
+    <g transform="translate(295, -85)">
+      <path d="M0,524 L-10,498 Q-12,490 -7,487 L7,487 Q12,490 10,498 Z" fill="#40916c" opacity="0.8" />
+      <circle cx="0" cy="478" r="11" fill="#f0d0a8" />
+      <path d="M-10,474 Q-10,465 -2,463 Q6,462 10,466 Q12,470 10,474" fill="#8a6a40" />
+      <circle cx="-3" cy="478" r="1.5" fill="#4a5a3a" />
+      <circle cx="3" cy="478" r="1.5" fill="#4a5a3a" />
+      <path d="M-4,483 Q0,488 4,483" fill="none" stroke="#c09878" stroke-width="1.2" stroke-linecap="round" />
+      <path d="M-8,492 Q-18,490 -26,488" fill="none" stroke="#f0d0a8" stroke-width="4" stroke-linecap="round" />
+      <path d="M8,492 Q22,490 34,486" fill="none" stroke="#f0d0a8" stroke-width="4" stroke-linecap="round" />
+    </g>
+
+    <!-- Papa -->
+    <g transform="translate(385, -85)">
+      <path d="M0,518 L-20,470 Q-22,455 -12,450 L12,450 Q22,455 20,470 Z" fill="#2d5a87" opacity="0.85" />
+      <circle cx="0" cy="436" r="18" fill="#d4a882" />
+      <ellipse cx="0" cy="424" rx="22" ry="6" fill="#3d3028" />
+      <rect x="-12" y="412" width="24" height="14" rx="4" fill="#3d3028" />
+      <circle cx="-5" cy="438" r="2" fill="#4a3d3d" />
+      <circle cx="5" cy="438" r="2" fill="#4a3d3d" />
+      <path d="M-6,444 Q0,450 6,444" fill="none" stroke="#a07860" stroke-width="1.5" stroke-linecap="round" />
+      <circle cx="-6" cy="437" r="5" fill="none" stroke="#5a5a5a" stroke-width="1" />
+      <circle cx="6" cy="437" r="5" fill="none" stroke="#5a5a5a" stroke-width="1" />
+      <line x1="-1" y1="437" x2="1" y2="437" stroke="#5a5a5a" stroke-width="1" />
+      <path d="M-16,462 Q-30,468 -38,474" fill="none" stroke="#d4a882" stroke-width="5" stroke-linecap="round" />
+      <path d="M16,462 Q28,465 30,458" fill="none" stroke="#d4a882" stroke-width="5" stroke-linecap="round" />
+    </g>
+
+    <!-- Navi -->
+    <g transform="translate(65, 413)">
+      <ellipse cx="0" cy="0" rx="18" ry="10" fill="#8B6914" opacity="0.8" />
+      <circle cx="18" cy="-6" r="8" fill="#8B6914" opacity="0.8" />
+      <ellipse cx="22" cy="-13" rx="4" ry="6" fill="#7a5a10" opacity="0.7" transform="rotate(15 22 -13)" />
+      <circle cx="21" cy="-7" r="1.5" fill="#2a1a05" />
+      <circle cx="26" cy="-5" r="2" fill="#2a1a05" />
+      <path d="M-18,-2 Q-28,-15 -22,-22" fill="none" stroke="#8B6914" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+      <line x1="-8" y1="8" x2="-10" y2="18" stroke="#7a5a10" stroke-width="3" stroke-linecap="round" />
+      <line x1="8" y1="8" x2="6" y2="18" stroke="#7a5a10" stroke-width="3" stroke-linecap="round" />
+    </g>
+
+    <!-- Ground details -->
+    <circle cx="256" cy="460" r="3" fill="#6aae7f" opacity="0.4" />
+    <circle cx="276" cy="465" r="2" fill="#5a9e6f" opacity="0.3" />
+    <circle cx="216" cy="463" r="2.5" fill="#6aae7f" opacity="0.35" />
+
+    <!-- Bottom banner -->
+    <rect x="0" y="445" width="512" height="67" fill="#1e3a5f" opacity="0.88" />
+    <text x="256" y="475" text-anchor="middle" font-family="Georgia, serif" font-size="24" fill="#fde68a" letter-spacing="2">BUENOS AIRES</text>
+    <text x="256" y="497" text-anchor="middle" font-family="sans-serif" font-size="11" fill="rgba(255,255,255,0.7)" letter-spacing="3" font-weight="500">COMPANION GUIDE</text>
+  </g>
+
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="2" />
+</svg>
