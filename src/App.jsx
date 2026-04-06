@@ -370,6 +370,54 @@ function QuinquelaBanner({ title, subtitle, variant = "home" }) {
 
 // --- TAB CONTENT ---
 // --- TAB CONTENT ---
+const WEATHER_CODES = {
+  0: "☀️ Clear", 1: "🌤️ Mostly clear", 2: "⛅ Partly cloudy", 3: "☁️ Overcast",
+  45: "🌫️ Foggy", 48: "🌫️ Fog", 51: "🌦️ Light drizzle", 53: "🌦️ Drizzle",
+  55: "🌦️ Heavy drizzle", 61: "🌧️ Light rain", 63: "🌧️ Rain", 65: "🌧️ Heavy rain",
+  71: "🌨️ Light snow", 73: "🌨️ Snow", 75: "🌨️ Heavy snow",
+  80: "🌧️ Light showers", 81: "🌧️ Showers", 82: "🌧️ Heavy showers",
+  95: "⛈️ Thunderstorm", 96: "⛈️ Thunderstorm + hail", 99: "⛈️ Severe storm",
+};
+
+function WeatherCard() {
+  const [weather, setWeather] = useState(null);
+  useEffect(() => {
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=-34.60&longitude=-58.38&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&timezone=America/Argentina/Buenos_Aires&forecast_days=2")
+      .then(r => r.json())
+      .then(data => setWeather(data))
+      .catch(() => {});
+  }, []);
+  if (!weather || !weather.daily) return null;
+  const d = weather.daily;
+  const cw = weather.current_weather;
+  const todayDesc = WEATHER_CODES[d.weathercode[0]] || "—";
+  const tomorrowDesc = WEATHER_CODES[d.weathercode[1]] || "—";
+  const toF = (v) => Math.round(v);
+  const toC = (f) => Math.round((f - 32) * 5 / 9);
+  return (
+    <Card>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+        <div style={{ flex: 1 }}>
+          <h3 style={{ ...styles.cardTitle, margin: "0 0 4px", fontSize: 14 }}>Today</h3>
+          <p style={{ fontSize: 18, margin: 0, fontWeight: 700, color: "#1f2937" }}>{todayDesc}</p>
+          <p style={{ fontSize: 13, color: "#6b7280", margin: "2px 0" }}>{toF(d.temperature_2m_max[0])}°F / {toF(d.temperature_2m_min[0])}°F</p>
+          <p style={{ fontSize: 12, color: "#6b7280", margin: 0 }}>({toC(d.temperature_2m_max[0])}°C / {toC(d.temperature_2m_min[0])}°C)</p>
+          {d.precipitation_probability_max[0] > 20 && <p style={{ fontSize: 12, color: "#2563eb", margin: "2px 0", fontWeight: 600 }}>💧 {d.precipitation_probability_max[0]}% chance of rain</p>}
+        </div>
+        <div style={{ width: 1, height: 60, background: "#e5e7eb", margin: "0 12px" }} />
+        <div style={{ flex: 1, textAlign: "right" }}>
+          <h3 style={{ ...styles.cardTitle, margin: "0 0 4px", fontSize: 14 }}>Tomorrow</h3>
+          <p style={{ fontSize: 18, margin: 0, fontWeight: 700, color: "#1f2937" }}>{tomorrowDesc}</p>
+          <p style={{ fontSize: 13, color: "#6b7280", margin: "2px 0" }}>{toF(d.temperature_2m_max[1])}°F / {toF(d.temperature_2m_min[1])}°F</p>
+          <p style={{ fontSize: 12, color: "#6b7280", margin: 0 }}>({toC(d.temperature_2m_max[1])}°C / {toC(d.temperature_2m_min[1])}°C)</p>
+          {d.precipitation_probability_max[1] > 20 && <p style={{ fontSize: 12, color: "#2563eb", margin: "2px 0", fontWeight: 600 }}>💧 {d.precipitation_probability_max[1]}% chance of rain</p>}
+        </div>
+      </div>
+      {cw && <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 8, marginBottom: 0, textAlign: "center" }}>Right now: {toF(cw.temperature)}°F ({toC(cw.temperature)}°C)</p>}
+    </Card>
+  );
+}
+
 function HomeTab() {
   const [time, setTime] = useState({ japan: getJapanTime(), ba: getBuenosAiresTime() });
   useEffect(() => {
@@ -379,6 +427,9 @@ function HomeTab() {
 
   const dayName = new Date().toLocaleDateString("en-US", { weekday: "long", timeZone: "America/Argentina/Buenos_Aires" });
   const todaySchedule = SCHEDULE.week.find(d => d.day === dayName);
+  const tomorrowDate = new Date(new Date().getTime() + 86400000);
+  const tomorrowDayName = tomorrowDate.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/Argentina/Buenos_Aires" });
+  const tomorrowSchedule = SCHEDULE.week.find(d => d.day === tomorrowDayName);
 
   return (
     <div>
@@ -399,6 +450,8 @@ function HomeTab() {
         <p style={{ fontSize: 11, opacity: 0.6, marginTop: 6, marginBottom: 0, textAlign: "center" }}>12 hours ahead (Apr 27 – May 9)</p>
       </Card>
 
+      <WeatherCard />
+
       {todaySchedule && (
         <Card accent="#2563eb" style={{ background: "#eff6ff" }}>
           <h3 style={styles.cardTitle}>📅 Today ({dayName})</h3>
@@ -408,6 +461,23 @@ function HomeTab() {
           {todaySchedule.items && <p style={styles.cardMeta}><strong>Bring:</strong> {todaySchedule.items}</p>}
           <p style={styles.cardMeta}><strong>After school:</strong> {todaySchedule.afterSchool}</p>
           {todaySchedule.evening && <p style={styles.cardMeta}><strong>Evening:</strong> {todaySchedule.evening}</p>}
+        </Card>
+      )}
+
+      {tomorrowSchedule && (
+        <Card style={{ background: "#f8f6f3", border: "1px solid #e5e7eb" }}>
+          <h3 style={{ ...styles.cardTitle, color: "#6b7280", fontSize: 14 }}>📆 Tomorrow ({tomorrowDayName})</h3>
+          <p style={{ ...styles.cardMeta, fontSize: 13 }}>👔 {tomorrowSchedule.uniform}</p>
+          {tomorrowSchedule.rosa && <p style={{ ...styles.cardMeta, fontSize: 13, color: "#7c3aed" }}>🧹 {tomorrowSchedule.rosa}</p>}
+          {tomorrowSchedule.morning && <p style={{ ...styles.cardMeta, fontSize: 13, color: "#92400e" }}>🌅 {tomorrowSchedule.morning.length > 80 ? tomorrowSchedule.morning.substring(0, 80) + "..." : tomorrowSchedule.morning}</p>}
+          {tomorrowSchedule.items && <p style={{ ...styles.cardMeta, fontSize: 13 }}>{tomorrowSchedule.items}</p>}
+          {tomorrowSchedule.evening && <p style={{ ...styles.cardMeta, fontSize: 13 }}>🌙 {tomorrowSchedule.evening}</p>}
+        </Card>
+      )}
+      {!tomorrowSchedule && (
+        <Card style={{ background: "#f8f6f3", border: "1px solid #e5e7eb" }}>
+          <h3 style={{ ...styles.cardTitle, color: "#6b7280", fontSize: 14 }}>📆 Tomorrow ({tomorrowDayName})</h3>
+          <p style={{ ...styles.cardMeta, fontSize: 13 }}>No school. Relaxed day; enjoy time together!</p>
         </Card>
       )}
 
@@ -900,6 +970,7 @@ export default function App() {
       <div style={styles.content}>
         {renderTab()}
         <div style={{ height: 80 }} />
+        <p style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", padding: "0 0 8px" }}>Last updated: April 5, 2026 at 11:00 PM</p>
       </div>
       <nav style={styles.tabBar}>
         {TABS.map(t => (
