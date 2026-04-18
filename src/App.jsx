@@ -27,7 +27,7 @@ const EMERGENCY_CONTACTS = [
   { name: "Pato Sardo", phone: "+5491131091672", role: "Pepperdine Colleague", english: "okay", note: "Homestay Coordinator, colleague and friend" },
   { name: "Carolina Yim", phone: "+5491133772966", role: "Mamá de Oli", english: "okay", note: "Elora's friend's mom. Lives 10 min away." },
   { name: "Gama Veterinaria (Navi's vet)", phone: "+5491132719134", role: "Veterinarian", english: false, note: "Zárraga 3799, Villa Ortúzar, CABA. Closed Sundays.", noWhatsApp: false },
-  { name: "Rosa", phone: "+5491134152417", role: "Empleada (Housekeeper)", english: false, note: "Mon 8am–4pm, Wed 8am–2pm, Fri 8am–4pm. Cleans, cooks, does laundry. She knows the routine; just let her do her thing." },
+  { name: "Rosa", phone: "+5491134152417", role: "Empleada (Housekeeper)", english: false, note: "Mon 8am–4pm, Wed 8am–2pm, Fri 8am–4pm. Cleans, cooks, does laundry. On Mon/Wed/Fri she also rides with the kids in the Uber to school at 7:25am and returns to the house. She knows the routine; just let her do her thing." },
   { name: "Sofía Gnecco", phone: "+5491138841515", role: "Walo's Therapist", english: true, note: "Tuesday mornings at 10am. Viamonte 2416, CABA." },
   { name: "Sol Emiliano", phone: "+5493512121903", role: "Piano Teacher", english: true, note: "Thursdays 6pm at the house" },
   { name: "Saint Andrew's (Primary)", phone: "+541148466500", role: "School - Primary Sector", english: true, note: "Main line: 4846-6500. Ask for ext. 1235 or 1246 (Verónica Martinez / Nora Loewenberg).", priority: false, noWhatsApp: true },
@@ -95,11 +95,11 @@ const SCHEDULE = {
     evening: "Unpack backpacks when home. Elora: 5–10 min piano practice. Dinner ~7:30. Bedtime routine 8:00–8:30; in bed by 8:30–9:00.",
   },
   week: [
-    { day: "Monday", uniform: "PE Uniform + Swim", items: "🏊 Swim suit & swim bag", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "Hang wet swim stuff to dry!", rosa: "Rosa 8am–4pm" },
+    { day: "Monday", uniform: "PE Uniform", items: "", morning: "🚗 Rosa rides with the kids in the Uber to school (7:25am) and returns to the house. You can stay home!", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–4pm" },
     { day: "Tuesday", uniform: "Formal Uniform", items: "", morning: "⏰ Walo therapy with Sofía at 10am (Viamonte 2416, CABA). Leave by 9am (9:10 latest; Uber can take 10–15 min). Elora can come along. Feed kids before dropping at school (grab empanadas on the way).", afterSchool: "Elora: flute at school. Walo: fútbol at school. Pick up at SCHOOL at 5:30pm (or inform school + combi if skipping).", evening: "" },
-    { day: "Wednesday", uniform: "PE Uniform", items: "🏑 Elora: bring hockey bag", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–2pm" },
-    { day: "Thursday", uniform: "Formal Uniform", items: "", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "🎹 Piano with Sol at 6pm at home. Walo helps prepare dinner." },
-    { day: "Friday", uniform: "Formal Uniform", items: "", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–4pm", morning: "💧 Bubbly water delivery between 8:00–8:30am." },
+    { day: "Wednesday", uniform: "PE Uniform", items: "🏑 Elora: bring hockey bag", morning: "🚗 Rosa rides with the kids in the Uber to school (7:25am) and returns to the house. You can stay home!", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–2pm" },
+    { day: "Thursday", uniform: "Formal Uniform", items: "", morning: "🚗 You (grandma or papa) ride with the kids in the Uber to school (7:25am).", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "🎹 Piano with Sol at 6pm at home. Walo helps prepare dinner." },
+    { day: "Friday", uniform: "Formal Uniform", items: "", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–4pm", morning: "🚗 Rosa rides with the kids in the Uber to school (7:25am) and returns to the house. You can stay home! 💧 Bubbly water delivery between 8:00–8:30am." },
   ],
 };
 
@@ -158,6 +158,7 @@ const ACTIVITIES = [
   { name: "Boom Kids Café Caballito", address: "Av. Rivadavia 6079, Caballito, CABA", hours: "Mon–Sun 13–20h (confirm on Instagram)", fee: "~$13,000 weekdays; ~$17,000 weekends. Ages 4–12.", note: "Indoor play space: maze, ball pit, trampolines, climbing wall. Non-slip socks required. Reservation needed.", icon: "🎢" },
   { name: "Museo de Ciencias Naturales", subtitle: '"Bernardino Rivadavia"', address: "Av. Ángel Gallardo 470, Parque Centenario, Caballito", hours: "Tue–Sun 14–19h. No reservation needed.", fee: "Residents w/ DNI $6,000. Under 6 free.", note: "Dinosaur skeletons, aquarium, paleontology. Great with a walk around Parque Centenario.", icon: "🦕" },
   { name: "MIJU", subtitle: "Museo de la Imaginación y el Juego", address: "Av. de los Italianos 851, Puerto Madero", hours: "Wed–Fri 11–18h; Sat/Sun/holidays 10–18h", fee: "Only kids pay (~USD 2). Adults free. Wednesdays free w/ reservation.", note: "Play museum with floors by age: 0–3, 4–7, 8–12. Outdoor patio is free. One adult per child required.", icon: "🎨" },
+  { name: "Altitude Trampoline Park Belgrano", address: "Monroe 1699, C1428, CABA (inside Carrefour Market)", hours: "Check altitudebelgrano.com; typically closes 10:30pm.", fee: "Non-slip socks required.", note: "Trampoline park right next to Barrio Chino (Chinatown). Good combo: jumping then noodles or bubble tea.", icon: "🤸" },
 ];
 
 const PHRASES = [
@@ -624,6 +625,7 @@ function ScheduleTab() {
           <p style={styles.cardMeta}>🥣 <strong>7:00–7:15</strong> — Downstairs for breakfast</p>
           <p style={{ fontSize: 13, color: "#6b7280", marginLeft: 24, marginTop: 2, marginBottom: 2, lineHeight: 1.5 }}>Walo: eggs, yogurt drink, or rice crackers. Elora: prefers fruit (pear, mango, melon). Both eat cereal (corn flakes). Walo will eat some fruit too.</p>
           <p style={styles.cardMeta}>🚗 <strong>7:20–7:25</strong> — Uber pickup to school</p>
+          <p style={{ ...styles.cardMeta, background: "#f3e8ff", padding: "8px 10px", borderRadius: 8, marginTop: 4, border: "1px solid #e9d5ff" }}>👥 <strong>Who rides with the kids?</strong><br/>• <strong>Mon, Wed, Fri:</strong> Rosa rides with the kids and returns to the house. You can stay home!<br/>• <strong>Tues, Thurs:</strong> You (grandma or papa) ride with the kids to school.</p>
           <p style={{ ...styles.cardMeta, background: "#e8f0fe", padding: "8px 10px", borderRadius: 8, marginTop: 4 }}>💡 <strong>Tip:</strong> Reserve the Uber the night before for a 7:25am pickup. Be ready by 7:20.</p>
           <p style={styles.cardMeta}>🎒 Pack 2–3 snacks (one veggie) + water bottle</p>
           <p style={styles.cardMeta}>👔 Check uniform day (see weekly schedule below)</p>
@@ -632,6 +634,12 @@ function ScheduleTab() {
       </Section>
 
       <Section title="Weekly Schedule" icon="📅" defaultOpen={false}>
+        <Card accent="#dc2626" style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
+          <p style={{ ...styles.cardMeta, fontWeight: 700, color: "#991b1b", fontSize: 15 }}>🇦🇷 Friday, May 1 — Día del Trabajador (Labor Day)</p>
+          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🚫 <strong>No school</strong> for the kids that Friday.</p>
+          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🧹 <strong>Rosa will not come to work</strong> that day.</p>
+          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🏪 Many businesses, shops, and restaurants may be closed. Plan ahead for groceries and meals.</p>
+        </Card>
         <Card style={{ background: "#fffbeb", border: "1px solid #fde68a" }}>
           <p style={{ ...styles.cardMeta, fontWeight: 600, color: "#92400e" }}>📌 Every day: 2–3 snacks (one veggie) + water bottle. Reserve Uber night before for 7:25am. Unpack backpacks when home.</p>
         </Card>
@@ -858,6 +866,7 @@ function EssentialsTab() {
         <Card>
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>🧹 Rosa (Housekeeper)</p>
           <p style={styles.cardMeta}>Mon 8am–4pm, Wed 8am–2pm, Fri 8am–4pm. She cleans, cooks, and does laundry. She knows the routine; just let her do her thing.</p>
+          <p style={styles.cardMeta}>On <strong>Mon, Wed, and Fri</strong> she also rides with the kids in the Uber to school at 7:25am and then returns to the house.</p>
         </Card>
         <Card>
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>🏘️ Neighborhood</p>
@@ -874,6 +883,8 @@ function EssentialsTab() {
           <p style={styles.cardMeta}>Use <strong>Uber</strong> to get around (the app works here just like at home).</p>
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Morning school run:</p>
           <p style={styles.cardMeta}>Reserve Uber the night before for a <strong>7:25am</strong> pickup to school. Be ready by 7:20.</p>
+          <p style={styles.cardMeta}>• <strong>Mon, Wed, Fri:</strong> Rosa rides with the kids and returns to the house.</p>
+          <p style={styles.cardMeta}>• <strong>Tues, Thurs:</strong> You (grandma or papa) ride with the kids to school.</p>
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Afternoon pickup (~5pm):</p>
           <p style={styles.cardMeta}><strong>Walk to Pepperdine</strong> (~40 min). Stop at <strong>Forno</strong> coffee shop halfway (Vidal 1412) for a break.</p>
           <p style={styles.cardMeta}>On <strong>Tuesdays</strong>: Uber to <strong>school</strong> for 5:30pm pickup (if doing after-school activities).</p>
@@ -914,7 +925,7 @@ function EssentialsTab() {
         </Card>
       </Section>
 
-      <Section title="Flight Info" icon="✈️">
+      <Section title="Travel Info" icon="✈️">
         <Collapsible title="Grandma & Papa's Flights" accent="#6366f1">
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Confirmation: UYSSGH</p>
           <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
@@ -935,9 +946,18 @@ function EssentialsTab() {
           <p style={styles.cardMeta}>Tue, Apr 28: JFK → HND (AA 167, departs 10:30 AM)</p>
           <p style={styles.cardMeta}>Arrive Tokyo: Wed, Apr 29 at 1:55 PM</p>
           <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
-          <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Hotel (Apr 29–May 3)</p>
+          <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Tokyo Hotel (Apr 29–May 3)</p>
           <p style={styles.cardMeta}>Mitsui Garden Hotel Ginza gochome</p>
           <p style={styles.cardMeta}>5-13-15 Ginza, Chuo-ku, Tokyo</p>
+          <p style={styles.cardMeta}><a href="https://www.gardenhotels.co.jp/ginza-gochome/" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>🔗 Hotel website</a></p>
+          <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
+          <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Kyoto Hotel (May 3–May 8)</p>
+          <p style={styles.cardMeta}>Ryokan Sakura Urushi</p>
+          <p style={styles.cardMeta}><a href="https://www.kyoto-ryokan-sakura.com/urushi/" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>🔗 Hotel website</a></p>
+          <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
+          <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Kyoto Meeting Location</p>
+          <p style={styles.cardMeta}>Moyashi Machiya (もやし町家)</p>
+          <p style={styles.cardMeta}><a href="https://www.google.com/maps/place/%E3%82%82%E3%82%84%E3%81%97%E7%94%BA%E5%AE%B6%EF%BC%88%E4%BA%AC%E9%83%BD%E3%82%82%E3%82%84%E3%81%97%E7%94%BA%E5%AE%B6%EF%BC%89/@34.9937244,135.7512113,17z/" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>🗺️ View on Google Maps</a></p>
           <div style={{ height: 1, background: "#e5e7eb", margin: "12px 0" }} />
           <p style={{ ...styles.cardMeta, fontWeight: 600 }}>Returning to Buenos Aires</p>
           <p style={styles.cardMeta}>Fri, May 8: ITM → HND (JL 116) → JFK (AA 168) → EZE (AA 953)</p>
@@ -979,7 +999,7 @@ export default function App() {
       <div style={styles.content}>
         {renderTab()}
         <div style={{ height: 80 }} />
-        <p style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", padding: "0 0 8px" }}>Last updated: April 5, 2026 at 11:00 PM</p>
+        <p style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", padding: "0 0 8px" }}>Last updated: April 18, 2026</p>
       </div>
       <nav style={styles.tabBar}>
         {TABS.map(t => (
