@@ -23,6 +23,8 @@ const EMERGENCY_CONTACTS = [
   { name: "Harmony (Mom)", phone: "+5491123188517", role: "Mom", english: true, note: "12 hrs ahead in Japan (Apr 27–May 9)", priority: true },
   { name: "Vicky Cassels", phone: "+5491152577056", role: "1st Contact for Everything", english: true, note: "Go-to contact for anything urgent or non-urgent. Harmony's close friend, mamá de Mary (Elora's friend). Lives 25 min away.", priority: true },
   { name: "Silvina Braun", phone: "+5491144449318", role: "2nd Emergency Contact", english: true, note: "Pepperdine travel agent", priority: true },
+  { name: "Ron Cox", phone: "+18052535625", role: "Backup for Travis & Harmony", english: true, note: "In Japan with the parents (Apr 27–May 9; 12 hrs ahead). Try if you can't get hold of Harmony or Travis directly." },
+  { name: "Shelly Cox", phone: "+18057469203", role: "Backup for Travis & Harmony", english: true, note: "In Japan with the parents (Apr 27–May 9; 12 hrs ahead). Try if you can't get hold of Harmony or Travis directly." },
   { name: "Hermana Vero", phone: "+5491136776709", role: "San Benito Convent", english: true, note: "Sister at San Benito Convent" },
   { name: "Pato Sardo", phone: "+5491131091672", role: "Pepperdine Colleague", english: "okay", note: "Homestay Coordinator, colleague and friend" },
   { name: "Carolina Yim", phone: "+5491133772966", role: "Mamá de Oli", english: "okay", note: "Elora's friend's mom. Lives 10 min away." },
@@ -102,6 +104,56 @@ const SCHEDULE = {
     { day: "Friday", uniform: "Formal Uniform", items: "", afterSchool: "Walk to Pepperdine (~40 min). Combi drops kids ~5:00–5:15pm.", evening: "", rosa: "Rosa 8am–4pm", morning: "🚗 Rosa rides with the kids in the Uber to school (7:25am) and returns to the house. You can stay home! 💧 Bubbly water delivery between 8:00–8:30am." },
   ],
 };
+
+// Special, date-specific events that override or supplement the regular weekly schedule.
+// Surfaced on the Home tab (Today / Tomorrow) and at the top of the Weekly Schedule.
+const SPECIAL_EVENTS = [
+  {
+    date: "2026-04-30",
+    label: "Thu, Apr 30",
+    title: "🎈 Elora's friend's birthday party at Altitude",
+    accent: "#db2777",
+    bg: "#fdf2f8",
+    border: "#fbcfe8",
+    text: "#9d174d",
+    notes: [
+      "🎉 Elora: another parent will take her directly from school to the party at Altitude Trampoline Park Belgrano (Monroe 1699, inside Carrefour Market).",
+      "🚐 Walo: rides the combi back to Pepperdine by himself; Claudio & Lily will be there as usual.",
+      "🕖 Party ends at 7pm.",
+      "🚗 Pick Elora up at Altitude at 7:00pm.",
+      "🍔 Suggestion: get Walo from Pepperdine first, grab dinner or play somewhere nearby, then Uber to Altitude by 7pm to collect Elora and all Uber home together.",
+      "❌ No piano tonight; the lesson has been moved to Fri, May 1 at 10am.",
+      "🌙 A late night is fine; no school on Fri, May 1 (Labor Day).",
+    ],
+  },
+  {
+    date: "2026-05-01",
+    label: "Fri, May 1",
+    title: "🇦🇷 Día del Trabajador (Labor Day) + 🎹 Piano with Sol at 10am",
+    accent: "#dc2626",
+    bg: "#fef2f2",
+    border: "#fecaca",
+    text: "#991b1b",
+    notes: [
+      "🚫 No school for the kids today.",
+      "🧹 Rosa will not come to work today.",
+      "🏪 Many businesses, shops, and restaurants may be closed. Plan ahead for groceries and meals.",
+      "🎹 Piano with Sol at 10am at home (make-up lesson, moved from Thu, Apr 30).",
+    ],
+  },
+];
+
+// Returns today's date in Buenos Aires as YYYY-MM-DD.
+function getBADateISO(offsetDays = 0) {
+  const d = new Date();
+  if (offsetDays) d.setTime(d.getTime() + offsetDays * 86400000);
+  // en-CA yields YYYY-MM-DD
+  return d.toLocaleDateString("en-CA", { timeZone: "America/Argentina/Buenos_Aires" });
+}
+
+function getSpecialEvent(isoDate) {
+  return SPECIAL_EVENTS.find(e => e.date === isoDate);
+}
 
 const MEAL_IDEAS = [
   { name: "Mac n cheese", note: "" },
@@ -440,6 +492,8 @@ function HomeTab() {
   const tomorrowDate = new Date(new Date().getTime() + 86400000);
   const tomorrowDayName = tomorrowDate.toLocaleDateString("en-US", { weekday: "long", timeZone: "America/Argentina/Buenos_Aires" });
   const tomorrowSchedule = SCHEDULE.week.find(d => d.day === tomorrowDayName);
+  const todaySpecial = getSpecialEvent(getBADateISO(0));
+  const tomorrowSpecial = getSpecialEvent(getBADateISO(1));
 
   return (
     <div>
@@ -474,6 +528,16 @@ function HomeTab() {
         </Card>
       )}
 
+      {todaySpecial && (
+        <Card accent={todaySpecial.accent} style={{ background: todaySpecial.bg, border: `2px solid ${todaySpecial.border}` }}>
+          <h3 style={{ ...styles.cardTitle, color: todaySpecial.text }}>⭐ Special today ({todaySpecial.label})</h3>
+          <p style={{ ...styles.cardMeta, color: todaySpecial.text, fontWeight: 700 }}>{todaySpecial.title}</p>
+          {todaySpecial.notes.map((n, i) => (
+            <p key={i} style={{ ...styles.cardMeta, color: todaySpecial.text }}>{n}</p>
+          ))}
+        </Card>
+      )}
+
       {tomorrowSchedule && (
         <Card style={{ background: "#f8f6f3", border: "1px solid #e5e7eb" }}>
           <h3 style={{ ...styles.cardTitle, color: "#6b7280", fontSize: 14 }}>📆 Tomorrow ({tomorrowDayName})</h3>
@@ -488,6 +552,17 @@ function HomeTab() {
         <Card style={{ background: "#f8f6f3", border: "1px solid #e5e7eb" }}>
           <h3 style={{ ...styles.cardTitle, color: "#6b7280", fontSize: 14 }}>📆 Tomorrow ({tomorrowDayName})</h3>
           <p style={{ ...styles.cardMeta, fontSize: 13 }}>No school. Relaxed day; enjoy time together!</p>
+        </Card>
+      )}
+
+      {tomorrowSpecial && (
+        <Card accent={tomorrowSpecial.accent} style={{ background: tomorrowSpecial.bg, border: `1px dashed ${tomorrowSpecial.border}` }}>
+          <h3 style={{ ...styles.cardTitle, color: tomorrowSpecial.text, fontSize: 14 }}>⭐ Tomorrow also ({tomorrowSpecial.label})</h3>
+          <p style={{ ...styles.cardMeta, color: tomorrowSpecial.text, fontWeight: 600, fontSize: 13 }}>{tomorrowSpecial.title}</p>
+          {tomorrowSpecial.notes.slice(0, 2).map((n, i) => (
+            <p key={i} style={{ ...styles.cardMeta, color: tomorrowSpecial.text, fontSize: 13 }}>{n}</p>
+          ))}
+          <p style={{ ...styles.cardMeta, color: tomorrowSpecial.text, fontSize: 12, fontStyle: "italic" }}>(See the Schedule tab for full details.)</p>
         </Card>
       )}
 
@@ -634,12 +709,19 @@ function ScheduleTab() {
       </Section>
 
       <Section title="Weekly Schedule" icon="📅" defaultOpen={false}>
-        <Card accent="#dc2626" style={{ background: "#fef2f2", border: "1px solid #fecaca" }}>
-          <p style={{ ...styles.cardMeta, fontWeight: 700, color: "#991b1b", fontSize: 15 }}>🇦🇷 Friday, May 1 — Día del Trabajador (Labor Day)</p>
-          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🚫 <strong>No school</strong> for the kids that Friday.</p>
-          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🧹 <strong>Rosa will not come to work</strong> that day.</p>
-          <p style={{ ...styles.cardMeta, color: "#991b1b" }}>🏪 Many businesses, shops, and restaurants may be closed. Plan ahead for groceries and meals.</p>
-        </Card>
+        {SPECIAL_EVENTS
+          .filter(e => e.date >= getBADateISO(0))
+          .slice()
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .map((e, i) => (
+            <Card key={`special-${e.date}`} accent={e.accent} style={{ background: e.bg, border: `2px solid ${e.border}` }}>
+              <p style={{ ...styles.cardMeta, fontWeight: 700, color: e.text, fontSize: 15 }}>⭐ {e.label} — Special event</p>
+              <p style={{ ...styles.cardMeta, color: e.text, fontWeight: 600 }}>{e.title}</p>
+              {e.notes.map((n, j) => (
+                <p key={j} style={{ ...styles.cardMeta, color: e.text }}>{n}</p>
+              ))}
+            </Card>
+          ))}
         <Card style={{ background: "#fffbeb", border: "1px solid #fde68a" }}>
           <p style={{ ...styles.cardMeta, fontWeight: 600, color: "#92400e" }}>📌 Every day: 2–3 snacks (one veggie) + water bottle. Reserve Uber night before for 7:25am. Unpack backpacks when home.</p>
         </Card>
