@@ -150,10 +150,7 @@ const SPECIAL_EVENTS = [
     border: "#bbf7d0",
     text: "#166534",
     notes: [
-      "👕 Walo: NO uniform today; he can wear any clothes he wants.",
-      "🧴 Walo: pack sunscreen and bug spray; apply sunscreen before school.",
-      "🧢 Walo: send him with a hat.",
-      "💧 Walo: water bottle (extra important today).",
+      "👕 Walo: NO uniform today; he can wear any clothes he wants. Send him with sunscreen and bug spray (apply sunscreen before school), a hat, and a water bottle.",
       "👔 Elora: regular PE Uniform (normal Monday).",
     ],
   },
