@@ -1,52 +1,4 @@
-import { useState, useEffect, useContext, createContext } from "react";
-
-// --- OFFLINE INFRASTRUCTURE ---
-// All static data (contacts, addresses, schedule, IDs, phrases, DNI photos) is
-// inlined in this bundle, so the app fundamentally works without internet.
-// What we add here: connectivity detection, cached weather, persisted UI state,
-// graceful degradation of external links, and a screenshot-ready cheat sheet.
-
-const OnlineContext = createContext(true);
-
-function useOnlineStatus() {
-  const [isOnline, setIsOnline] = useState(() => {
-    if (typeof navigator === "undefined") return true;
-    return navigator.onLine !== false;
-  });
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    const goOnline = () => setIsOnline(true);
-    const goOffline = () => setIsOnline(false);
-    window.addEventListener("online", goOnline);
-    window.addEventListener("offline", goOffline);
-    return () => {
-      window.removeEventListener("online", goOnline);
-      window.removeEventListener("offline", goOffline);
-    };
-  }, []);
-  return isOnline;
-}
-
-// Wrapper around window.storage so we never crash if it is unavailable.
-async function storageGet(key) {
-  try {
-    if (typeof window === "undefined" || !window.storage) return null;
-    const result = await window.storage.get(key);
-    if (!result || result.value == null) return null;
-    try { return JSON.parse(result.value); } catch { return result.value; }
-  } catch {
-    return null;
-  }
-}
-async function storageSet(key, value) {
-  try {
-    if (typeof window === "undefined" || !window.storage) return false;
-    await window.storage.set(key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
+import { useState, useEffect } from "react";
 
 const TABS = [
   { id: "home", label: "Home", icon: "🏠" },
@@ -189,6 +141,22 @@ const SPECIAL_EVENTS = [
       "🎹 Piano with Sol at 10am at home (make-up lesson, moved from Thu, Apr 30).",
     ],
   },
+  {
+    date: "2026-05-04",
+    label: "Mon, May 4",
+    title: "👕 Walo: no uniform today + outdoor essentials",
+    accent: "#16a34a",
+    bg: "#f0fdf4",
+    border: "#bbf7d0",
+    text: "#166534",
+    notes: [
+      "👕 Walo: NO uniform today; he can wear any clothes he wants.",
+      "🧴 Walo: pack sunscreen and bug spray; apply sunscreen before school.",
+      "🧢 Walo: send him with a hat.",
+      "💧 Walo: water bottle (extra important today).",
+      "👔 Elora: regular PE Uniform (normal Monday).",
+    ],
+  },
 ];
 
 // Returns today's date in Buenos Aires as YYYY-MM-DD.
@@ -302,49 +270,29 @@ function getBuenosAiresTime() {
 
 // --- COMPONENTS ---
 function PhoneButton({ phone, noWhatsApp }) {
-  const isOnline = useContext(OnlineContext);
-  // tel: launches the dialer without internet; WhatsApp web intent does not.
   return (
-    <div style={{ display: "flex", gap: 8, marginTop: 6, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 8, marginTop: 6 }}>
       <a href={phoneUrl(phone)} style={styles.phonePill}>📞 Call</a>
-      {!noWhatsApp && (
-        isOnline ? (
-          <a href={waUrl(phone)} target="_blank" rel="noopener noreferrer" style={{ ...styles.phonePill, background: "#25D366", color: "#fff" }}>💬 WhatsApp</a>
-        ) : (
-          <span title="WhatsApp link needs internet" style={{ ...styles.phonePill, background: "#e5e7eb", color: "#9ca3af", cursor: "not-allowed" }}>💬 WhatsApp (offline)</span>
-        )
-      )}
+      {!noWhatsApp && <a href={waUrl(phone)} target="_blank" rel="noopener noreferrer" style={{ ...styles.phonePill, background: "#25D366", color: "#fff" }}>💬 WhatsApp</a>}
     </div>
   );
 }
 
 function AddressLink({ address, mapsLink }) {
-  const isOnline = useContext(OnlineContext);
   const [copied, setCopied] = useState(false);
   const handleCopy = (e) => {
     e.preventDefault();
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(address).then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }).catch(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      });
-    }
+    navigator.clipboard.writeText(address).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
   };
   const link = mapsLink || mapsUrl(address);
   return (
     <div style={{ marginTop: 6 }}>
-      {isOnline ? (
-        <a href={link} target="_blank" rel="noopener noreferrer" style={styles.addressLink}>
-          📍 {address}
-        </a>
-      ) : (
-        <span style={{ ...styles.addressLink, color: "#374151", cursor: "default" }} title="Maps needs internet; the address is saved here for copying">
-          📍 {address}
-        </span>
-      )}
+      <a href={link} target="_blank" rel="noopener noreferrer" style={styles.addressLink}>
+        📍 {address}
+      </a>
       <button onClick={handleCopy} style={styles.copyPill}>
         {copied ? "✓ Copied!" : "📋 Copy for Uber"}
       </button>
@@ -501,60 +449,21 @@ const WEATHER_CODES = {
 };
 
 function WeatherCard() {
-  const isOnline = useContext(OnlineContext);
   const [weather, setWeather] = useState(null);
-  const [cachedAt, setCachedAt] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-
   useEffect(() => {
-    let cancelled = false;
-    // 1. Hydrate from cache so we always have something on screen.
-    storageGet("weather:v1").then(stored => {
-      if (cancelled || !stored) return;
-      if (stored.data) {
-        setWeather(stored.data);
-        setCachedAt(stored.cachedAt || null);
-        setLoading(false);
-      }
-    });
-    // 2. If we are online, refresh in the background.
-    if (typeof navigator !== "undefined" && navigator.onLine === false) {
-      // Skip the fetch; the cache (if any) is already showing.
-      setLoading(false);
-      return () => { cancelled = true; };
-    }
     fetch("https://api.open-meteo.com/v1/forecast?latitude=-34.60&longitude=-58.38&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_max&current_weather=true&temperature_unit=fahrenheit&timezone=America/Argentina/Buenos_Aires&forecast_days=2")
       .then(r => r.json())
-      .then(data => {
-        if (cancelled) return;
-        const now = Date.now();
-        setWeather(data);
-        setCachedAt(now);
-        setLoading(false);
-        storageSet("weather:v1", { data, cachedAt: now });
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setLoading(false);
-        // Only flip to error if we have no cached data to show.
-        setError(prev => prev || !weather);
-      });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isOnline]);
-
-  if (loading && !weather) return (
+      .then(data => { setWeather(data); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
+  }, []);
+  if (loading) return (
     <Card><p style={{ ...styles.cardMeta, textAlign: "center", color: "#9ca3af" }}>🌤️ Loading weather...</p></Card>
   );
-  if ((error && !weather) || !weather || !weather.daily) return (
+  if (error || !weather || !weather.daily) return (
     <Card>
-      <p style={{ ...styles.cardMeta, textAlign: "center" }}>
-        🌤️ {isOnline
-          ? <a href="https://weather.com/weather/today/l/-34.60,-58.38" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>Check Buenos Aires weather</a>
-          : <span style={{ color: "#9ca3af" }}>Weather will load once you are back online.</span>
-        }
-      </p>
+      <p style={{ ...styles.cardMeta, textAlign: "center" }}>🌤️ <a href="https://weather.com/weather/today/l/-34.60,-58.38" target="_blank" rel="noopener noreferrer" style={{ color: "#2563eb", textDecoration: "none", fontWeight: 600 }}>Check Buenos Aires weather</a></p>
     </Card>
   );
   const d = weather.daily;
@@ -563,10 +472,6 @@ function WeatherCard() {
   const tomorrowDesc = WEATHER_CODES[d.weathercode[1]] || "—";
   const toF = (v) => Math.round(v);
   const toC = (f) => Math.round((f - 32) * 5 / 9);
-  // Show a tiny "cached" line if the data is stale or we are offline.
-  const isStale = !isOnline || (cachedAt && (Date.now() - cachedAt) > 6 * 60 * 60 * 1000);
-  const cachedLabel = cachedAt ? new Date(cachedAt).toLocaleString("en-US", { timeZone: "America/Argentina/Buenos_Aires", month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) : null;
-
   return (
     <Card>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
@@ -586,13 +491,12 @@ function WeatherCard() {
           {d.precipitation_probability_max[1] > 20 && <p style={{ fontSize: 12, color: "#2563eb", margin: "2px 0", fontWeight: 600 }}>💧 {d.precipitation_probability_max[1]}% chance of rain</p>}
         </div>
       </div>
-      {cw && !isStale && <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 8, marginBottom: 0, textAlign: "center" }}>Right now: {toF(cw.temperature)}°F ({toC(cw.temperature)}°C)</p>}
-      {isStale && cachedLabel && <p style={{ fontSize: 11, color: "#92400e", marginTop: 8, marginBottom: 0, textAlign: "center", fontStyle: "italic" }}>📴 Cached forecast from {cachedLabel}</p>}
+      {cw && <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 8, marginBottom: 0, textAlign: "center" }}>Right now: {toF(cw.temperature)}°F ({toC(cw.temperature)}°C)</p>}
     </Card>
   );
 }
 
-function HomeTab({ onOpenCheatSheet }) {
+function HomeTab() {
   const [time, setTime] = useState({ japan: getJapanTime(), ba: getBuenosAiresTime() });
   useEffect(() => {
     const i = setInterval(() => setTime({ japan: getJapanTime(), ba: getBuenosAiresTime() }), 30000);
@@ -698,17 +602,11 @@ function HomeTab({ onOpenCheatSheet }) {
         ))}
       </div>
 
-      <Card accent="#0891b2" style={{ background: "#ecfeff", border: "1px solid #a5f3fc" }}>
-        <h3 style={{ ...styles.cardTitle, color: "#155e75" }}>📴 Offline Cheat Sheet</h3>
-        <p style={{ ...styles.cardMeta, color: "#155e75" }}>One screen with the calls, addresses, and IDs you would want if your phone loses signal. Long-press to screenshot.</p>
-        <button onClick={onOpenCheatSheet} style={styles.cheatOpenBtn}>Open cheat sheet →</button>
-      </Card>
-
     </div>
   );
 }
 
-function EmergencyTab({ onOpenCheatSheet }) {
+function EmergencyTab() {
   return (
     <div>
       <QuinquelaBanner title="Contacts" subtitle="Your support network" variant="contacts" />
@@ -722,9 +620,6 @@ function EmergencyTab({ onOpenCheatSheet }) {
           <a href={phoneUrl("+5491151561793")} style={styles.emergencyBtn}>📞 Travis</a>
           <a href={phoneUrl("+5491123188517")} style={styles.emergencyBtn}>📞 Harmony</a>
         </div>
-        {onOpenCheatSheet && (
-          <button onClick={onOpenCheatSheet} style={{ ...styles.cheatOpenBtn, marginTop: 12, background: "#fff", color: "#dc2626", border: "1px solid #fecaca" }}>📴 Open offline cheat sheet</button>
-        )}
       </Card>
 
       <Section title="All Contacts" icon="📞" defaultOpen={false} count={EMERGENCY_CONTACTS.length}>
@@ -1040,31 +935,10 @@ function PlacesTab() {
   );
 }
 
-function EssentialsTab({ onOpenCheatSheet }) {
-  const isOnline = useContext(OnlineContext);
+function EssentialsTab() {
   return (
     <div>
       <QuinquelaBanner title="Essentials" subtitle="Wifi, transport, phrases & more" variant="essentials" />
-
-      <Section title="Offline Mode" icon="📴" defaultOpen={false}>
-        <Card accent="#0891b2" style={{ background: "#ecfeff", border: "1px solid #a5f3fc" }}>
-          <p style={{ ...styles.cardMeta, fontWeight: 600, color: "#155e75" }}>
-            Connection right now: <ConnectionPill isOnline={isOnline} />
-          </p>
-          <p style={styles.cardMeta}>
-            <strong>What works without internet:</strong> all contacts, addresses, the schedule, kids' DNI and passport numbers, DNI photos, OSDE info, Spanish phrases, and the Cheat Sheet.
-          </p>
-          <p style={styles.cardMeta}>
-            <strong>What needs internet:</strong> Google Maps links, WhatsApp, the live weather refresh, and the dólar blue / news links below.
-          </p>
-          <p style={styles.cardMeta}>
-            When you go offline, address links stay readable as plain text and a 📋 copy button is always there for pasting into Uber. Weather falls back to the last cached forecast.
-          </p>
-          {onOpenCheatSheet && (
-            <button onClick={onOpenCheatSheet} style={{ ...styles.cheatOpenBtn, marginTop: 8 }}>📴 Open the Cheat Sheet</button>
-          )}
-        </Card>
-      </Section>
 
       <Section title="Wifi" icon="📶" defaultOpen={false}>
         <Card>
@@ -1202,264 +1076,47 @@ function EssentialsTab({ onOpenCheatSheet }) {
   );
 }
 
-// --- OFFLINE UI COMPONENTS ---
-function OfflineBanner({ isOnline, dismissed, onDismiss }) {
-  if (isOnline || dismissed) return null;
-  return (
-    <div style={styles.offlineBanner} role="status" aria-live="polite">
-      <span style={{ fontSize: 16 }}>📴</span>
-      <div style={{ flex: 1, lineHeight: 1.3 }}>
-        <strong style={{ fontSize: 13 }}>You are offline.</strong>
-        <span style={{ fontSize: 12, opacity: 0.85, marginLeft: 6 }}>Contacts, addresses and IDs still work. Maps and WhatsApp are paused.</span>
-      </div>
-      <button onClick={onDismiss} aria-label="Dismiss offline notice" style={styles.offlineBannerDismiss}>×</button>
-    </div>
-  );
-}
-
-function ConnectionPill({ isOnline }) {
-  return (
-    <span style={{
-      ...styles.connectionPill,
-      background: isOnline ? "#dcfce7" : "#fef3c7",
-      color: isOnline ? "#166534" : "#92400e",
-      borderColor: isOnline ? "#bbf7d0" : "#fde68a",
-    }}>
-      <span style={{
-        display: "inline-block", width: 8, height: 8, borderRadius: "50%",
-        background: isOnline ? "#16a34a" : "#d97706",
-      }} />
-      {isOnline ? "Online" : "Offline mode"}
-    </span>
-  );
-}
-
-// A self-contained, screenshot-friendly summary of the most critical info.
-// Designed so a grandparent can long-press to screenshot one screen and have
-// everything they need even with no signal at all.
-function OfflineCheatSheet({ open, onClose }) {
-  const [copiedKey, setCopiedKey] = useState(null);
-  const copy = (text, key) => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(text).then(() => {
-        setCopiedKey(key);
-        setTimeout(() => setCopiedKey(null), 1800);
-      }).catch(() => {});
-    }
-  };
-  if (!open) return null;
-
-  // Pull the very-most-critical contacts. Order matters here.
-  const topContacts = [
-    { label: "🚨 Emergencies (911)", phone: "911" },
-    { label: "📞 Vicky Cassels (1st)", phone: "+5491152577056" },
-    { label: "📞 Silvina Braun (2nd)", phone: "+5491144449318" },
-    { label: "🏥 OSDE Life Emergency", phone: "08106661111" },
-    { label: "🏥 OSDE Medical Assist", phone: "08108887788" },
-    { label: "🇺🇸 US Embassy", phone: "+541157774533" },
-    { label: "👨 Travis (Dad)", phone: "+5491151561793" },
-    { label: "👩 Harmony (Mom)", phone: "+5491123188517" },
-  ];
-
-  const topPhrases = PHRASES.slice(0, 12);
-
-  return (
-    <div style={styles.cheatSheetOverlay} onClick={onClose}>
-      <div style={styles.cheatSheetPanel} onClick={(e) => e.stopPropagation()}>
-        <div style={styles.cheatSheetHeader}>
-          <div>
-            <h2 style={styles.cheatSheetTitle}>📴 Offline Cheat Sheet</h2>
-            <p style={styles.cheatSheetSub}>Screenshot this; works with no signal.</p>
-          </div>
-          <button onClick={onClose} aria-label="Close" style={styles.cheatSheetClose}>×</button>
-        </div>
-
-        <div style={styles.cheatSheetBody}>
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>📞 Call first</div>
-            {topContacts.map((c, i) => (
-              <div key={i} style={styles.cheatRow}>
-                <span style={styles.cheatRowLabel}>{c.label}</span>
-                <div style={{ display: "flex", gap: 6 }}>
-                  <a href={phoneUrl(c.phone)} style={styles.cheatCallPill}>{c.phone}</a>
-                  <button onClick={() => copy(c.phone, `phone-${i}`)} style={styles.cheatCopyPill}>
-                    {copiedKey === `phone-${i}` ? "✓" : "📋"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>🏥 Hospitals</div>
-            {MEDICAL.slice().reverse().map((m, i) => (
-              <div key={i} style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{m.icon} {m.name}</div>
-                <div style={{ fontSize: 12, color: "#6b7280", margin: "1px 0 2px" }}>{m.type}</div>
-                <div style={styles.cheatAddressRow}>
-                  <span style={{ fontSize: 12, color: "#374151", flex: 1 }}>{m.address}</span>
-                  <button onClick={() => copy(m.address, `med-${i}`)} style={styles.cheatCopyPill}>
-                    {copiedKey === `med-${i}` ? "✓" : "📋"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>🛡️ OSDE Plan {INSURANCE.plan}</div>
-            {INSURANCE.kids.map((k, i) => (
-              <div key={i} style={styles.cheatRow}>
-                <span style={styles.cheatRowLabel}>{k.name}</span>
-                <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: "#1e40af" }}>{k.number}</span>
-                  <button onClick={() => copy(k.number, `osde-${i}`)} style={styles.cheatCopyPill}>
-                    {copiedKey === `osde-${i}` ? "✓" : "📋"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>🪪 Kids' IDs</div>
-            {KIDS.map((k, i) => (
-              <div key={i} style={{ marginBottom: 10 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{k.nickname} (age {k.age})</div>
-                <div style={{ fontSize: 12, color: "#374151", lineHeight: 1.5 }}>
-                  Born {k.dob}<br/>
-                  DNI: <strong>{k.dni}</strong><br/>
-                  Passport: <strong>{k.passport}</strong>
-                </div>
-                <button onClick={() => copy(`${k.name} | DOB ${k.dob} | DNI ${k.dni} | Passport ${k.passport}`, `kid-${i}`)} style={{ ...styles.cheatCopyPill, marginTop: 4 }}>
-                  {copiedKey === `kid-${i}` ? "✓ Copied" : "📋 Copy all"}
-                </button>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>🏠 Addresses</div>
-            {ADDRESSES.map((a, i) => (
-              <div key={i} style={{ marginBottom: 8 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>{a.icon} {a.label}</div>
-                <div style={styles.cheatAddressRow}>
-                  <span style={{ fontSize: 12, color: "#374151", flex: 1 }}>{a.address}</span>
-                  <button onClick={() => copy(a.address, `addr-${i}`)} style={styles.cheatCopyPill}>
-                    {copiedKey === `addr-${i}` ? "✓" : "📋"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div style={styles.cheatBlock}>
-            <div style={styles.cheatBlockTitle}>🇪🇸 Survival Spanish</div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 0, borderRadius: 8, overflow: "hidden", border: "1px solid #e5e7eb" }}>
-              {topPhrases.map((p, i) => (
-                <div key={i} style={{ display: "contents" }}>
-                  <div style={{ ...styles.phraseCell, fontSize: 12, padding: "6px 8px", background: i % 2 === 0 ? "#f9fafb" : "#fff" }}>{p.en}</div>
-                  <div style={{ ...styles.phraseCell, fontSize: 12, padding: "6px 8px", fontWeight: 600, color: "#1e40af", background: i % 2 === 0 ? "#f9fafb" : "#fff" }}>{p.es}</div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div style={{ ...styles.cheatBlock, background: "#eff6ff", borderColor: "#bfdbfe" }}>
-            <div style={{ fontSize: 12, color: "#1e40af", lineHeight: 1.5 }}>
-              💡 <strong>Tip:</strong> Long-press to screenshot this card so you have everything even with zero signal. All info above is stored in the app and works offline.
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // --- MAIN APP ---
 export default function App() {
-  const isOnline = useOnlineStatus();
-  const [tab, setTabState] = useState("home");
-  const [tabHydrated, setTabHydrated] = useState(false);
-  const [cheatOpen, setCheatOpen] = useState(false);
-  const [bannerDismissed, setBannerDismissed] = useState(false);
-
-  // Hydrate the last-viewed tab from window.storage on first mount.
-  useEffect(() => {
-    let cancelled = false;
-    storageGet("ui:lastTab").then(stored => {
-      if (cancelled) return;
-      if (typeof stored === "string" && TABS.some(t => t.id === stored)) {
-        setTabState(stored);
-      }
-      setTabHydrated(true);
-    });
-    return () => { cancelled = true; };
-  }, []);
-
-  const setTab = (id) => {
-    setTabState(id);
-    if (tabHydrated) storageSet("ui:lastTab", id);
-  };
-
-  // Reset banner dismissal whenever connectivity flips, so a future drop is announced again.
-  useEffect(() => {
-    if (isOnline) setBannerDismissed(false);
-  }, [isOnline]);
+  const [tab, setTab] = useState("home");
 
   const renderTab = () => {
     switch (tab) {
-      case "home": return <HomeTab onOpenCheatSheet={() => setCheatOpen(true)} />;
-      case "emergency": return <EmergencyTab onOpenCheatSheet={() => setCheatOpen(true)} />;
+      case "home": return <HomeTab />;
+      case "emergency": return <EmergencyTab />;
       case "schedule": return <ScheduleTab />;
       case "places": return <PlacesTab />;
-      case "essentials": return <EssentialsTab onOpenCheatSheet={() => setCheatOpen(true)} />;
-      default: return <HomeTab onOpenCheatSheet={() => setCheatOpen(true)} />;
+      case "essentials": return <EssentialsTab />;
+      default: return <HomeTab />;
     }
   };
 
   return (
-    <OnlineContext.Provider value={isOnline}>
-      <div style={styles.appContainer}>
-        <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet" />
-        <OfflineBanner isOnline={isOnline} dismissed={bannerDismissed} onDismiss={() => setBannerDismissed(true)} />
-        <div style={styles.content}>
-          <div style={{ display: "flex", justifyContent: "flex-end", padding: "8px 0 0" }}>
-            <ConnectionPill isOnline={isOnline} />
-          </div>
-          {renderTab()}
-          <div style={{ height: 90 }} />
-          <p style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", padding: "0 0 8px" }}>
-            Last updated: April 18, 2026 · Works offline
-          </p>
-        </div>
-        <button
-          onClick={() => setCheatOpen(true)}
-          aria-label="Open offline cheat sheet"
-          style={styles.cheatFab}
-        >
-          📴
-        </button>
-        <OfflineCheatSheet open={cheatOpen} onClose={() => setCheatOpen(false)} />
-        <nav style={styles.tabBar}>
-          {TABS.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setTab(t.id)}
-              style={{
-                ...styles.tabButton,
-                color: tab === t.id ? "#1e40af" : "#9ca3af",
-                fontWeight: tab === t.id ? 700 : 400,
-                borderTop: tab === t.id ? "2px solid #1e40af" : "2px solid transparent",
-              }}
-            >
-              <span style={{ fontSize: 20 }}>{t.icon}</span>
-              <span style={{ fontSize: 10, marginTop: 2 }}>{t.label}</span>
-            </button>
-          ))}
-        </nav>
+    <div style={styles.appContainer}>
+      <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet" />
+      <div style={styles.content}>
+        {renderTab()}
+        <div style={{ height: 80 }} />
+        <p style={{ textAlign: "center", fontSize: 11, color: "#9ca3af", padding: "0 0 8px" }}>Last updated: April 18, 2026</p>
       </div>
-    </OnlineContext.Provider>
+      <nav style={styles.tabBar}>
+        {TABS.map(t => (
+          <button
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            style={{
+              ...styles.tabButton,
+              color: tab === t.id ? "#1e40af" : "#9ca3af",
+              fontWeight: tab === t.id ? 700 : 400,
+              borderTop: tab === t.id ? "2px solid #1e40af" : "2px solid transparent",
+            }}
+          >
+            <span style={{ fontSize: 20 }}>{t.icon}</span>
+            <span style={{ fontSize: 10, marginTop: 2 }}>{t.label}</span>
+          </button>
+        ))}
+      </nav>
+    </div>
   );
 }
 
@@ -1691,192 +1348,5 @@ const styles = {
     padding: "8px 12px",
     fontSize: 13,
     borderBottom: "1px solid #f3f4f6",
-  },
-  // --- Offline-mode styles ---
-  offlineBanner: {
-    position: "sticky",
-    top: 0,
-    zIndex: 90,
-    display: "flex",
-    alignItems: "center",
-    gap: 8,
-    background: "#fef3c7",
-    color: "#92400e",
-    borderBottom: "1px solid #fde68a",
-    padding: "8px 12px",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  offlineBannerDismiss: {
-    background: "transparent",
-    border: "none",
-    color: "#92400e",
-    fontSize: 22,
-    lineHeight: 1,
-    cursor: "pointer",
-    padding: "0 4px",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  connectionPill: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 6,
-    padding: "4px 10px",
-    borderRadius: 999,
-    fontSize: 11,
-    fontWeight: 700,
-    letterSpacing: 0.3,
-    border: "1px solid",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  cheatOpenBtn: {
-    display: "inline-block",
-    padding: "10px 16px",
-    borderRadius: 10,
-    fontSize: 14,
-    fontWeight: 700,
-    background: "#0891b2",
-    color: "#fff",
-    border: "none",
-    cursor: "pointer",
-    fontFamily: "'Nunito', sans-serif",
-    marginTop: 8,
-  },
-  cheatFab: {
-    position: "fixed",
-    bottom: 80,
-    // On viewports wider than the 480px column, anchor the FAB just inside the
-    // column's right edge using calc(); on narrower viewports the max() floor
-    // keeps it 16px from the screen edge.
-    right: "max(16px, calc(50% - 224px))",
-    width: 52,
-    height: 52,
-    borderRadius: "50%",
-    background: "#0891b2",
-    color: "#fff",
-    border: "none",
-    fontSize: 22,
-    cursor: "pointer",
-    boxShadow: "0 4px 12px rgba(8,145,178,0.35), 0 2px 4px rgba(0,0,0,0.1)",
-    zIndex: 95,
-    fontFamily: "'Nunito', sans-serif",
-  },
-  cheatSheetOverlay: {
-    position: "fixed",
-    inset: 0,
-    background: "rgba(15, 23, 42, 0.55)",
-    zIndex: 200,
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "center",
-    padding: "16px 8px",
-    overflowY: "auto",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  cheatSheetPanel: {
-    background: "#fff",
-    borderRadius: 16,
-    width: "100%",
-    maxWidth: 460,
-    boxShadow: "0 12px 36px rgba(0,0,0,0.25)",
-    overflow: "hidden",
-    margin: "8px auto 32px",
-  },
-  cheatSheetHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    padding: "16px 18px 12px",
-    background: "linear-gradient(135deg, #0e7490 0%, #155e75 100%)",
-    color: "#fff",
-  },
-  cheatSheetTitle: {
-    fontFamily: "'DM Serif Display', serif",
-    fontSize: 22,
-    margin: 0,
-    fontWeight: 400,
-  },
-  cheatSheetSub: {
-    fontSize: 12,
-    margin: "4px 0 0",
-    opacity: 0.85,
-  },
-  cheatSheetClose: {
-    background: "rgba(255,255,255,0.15)",
-    color: "#fff",
-    border: "none",
-    width: 32,
-    height: 32,
-    borderRadius: "50%",
-    fontSize: 22,
-    lineHeight: 1,
-    cursor: "pointer",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  cheatSheetBody: {
-    padding: "12px 14px 16px",
-  },
-  cheatBlock: {
-    background: "#f9fafb",
-    border: "1px solid #e5e7eb",
-    borderRadius: 12,
-    padding: "10px 12px",
-    marginBottom: 10,
-  },
-  cheatBlockTitle: {
-    fontSize: 13,
-    fontWeight: 800,
-    color: "#0f172a",
-    marginBottom: 8,
-    letterSpacing: 0.3,
-    textTransform: "uppercase",
-  },
-  cheatRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: 8,
-    padding: "4px 0",
-    borderBottom: "1px solid #f3f4f6",
-    flexWrap: "wrap",
-  },
-  cheatRowLabel: {
-    fontSize: 13,
-    color: "#374151",
-    fontWeight: 600,
-    flex: 1,
-    minWidth: 140,
-  },
-  cheatCallPill: {
-    display: "inline-flex",
-    alignItems: "center",
-    padding: "4px 10px",
-    borderRadius: 14,
-    fontSize: 12,
-    fontWeight: 700,
-    background: "#1e3a5f",
-    color: "#fff",
-    textDecoration: "none",
-    fontFamily: "'Nunito', sans-serif",
-  },
-  cheatCopyPill: {
-    background: "#e5e7eb",
-    color: "#1f2937",
-    border: "none",
-    borderRadius: 12,
-    padding: "4px 8px",
-    fontSize: 11,
-    fontWeight: 700,
-    cursor: "pointer",
-    fontFamily: "'Nunito', sans-serif",
-    minWidth: 32,
-  },
-  cheatAddressRow: {
-    display: "flex",
-    alignItems: "center",
-    gap: 6,
-    background: "#fff",
-    border: "1px solid #e5e7eb",
-    borderRadius: 8,
-    padding: "6px 8px",
   },
 };
